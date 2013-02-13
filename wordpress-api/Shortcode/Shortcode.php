@@ -10,26 +10,26 @@ namespace au\net\andrewgrant {
             $this->defaultsArray = $defaultsArray;
         }
 
-        private $replacementText;
+        private $tagText;
 
         /**
          *
          * @return type This returns the text that was used to construct this
          * instance - the shortcode tag text
          */
-        public function getReplacementText() {
-            return $this->replacementText;
+        public function getTagText() {
+            return $this->tagText;
         }
 
-        private function setReplacementText($replacementText) {
-            $this->replacementText = $replacementText;
+        private function setTagText($tagText) {
+            $this->tagText = $tagText;
         }
 
         private $shortcodeFunction;
 
-        private function setShortcodeFunction($replacementFunction) {
-            if (is_callable($replacementFunction)) {
-                $this->shortcodeFunction = $replacementFunction;
+        private function setCallback($callback) {
+            if (is_callable($callback)) {
+                $this->shortcodeFunction = $callback;
             } else {
                 throw new \Exception("A function was expected");
             }
@@ -37,11 +37,11 @@ namespace au\net\andrewgrant {
 
         /**
          *
-         * @param type $replacementText This is the shortcode tag name, as
+         * @param type $tagText This is the shortcode tag name, as
          * entered by the end user of the shortcode
          */
-        function __construct($replacementText) {
-            $this->setReplacementText($replacementText);
+        function __construct($tagText) {
+            $this->setTagText($tagText);
         }
 
         /**
@@ -49,10 +49,10 @@ namespace au\net\andrewgrant {
          * @param type $func This is the callback function: the function that
          * will be executed in place of the shortcode tag
          */
-        public function renderShortcode($func) {
-            add_shortcode($this->getReplacementText(), array($this, 'runFunc'));
-            $this->setShortcodeFunction($func);
-            $this->runFunc();
+        public function renderShortcode($callback) {
+            add_shortcode($this->getTagText(), array($this, 'runFunc'));
+            $this->setCallback($callback);
+            $this->executeCallback();
         }
 
         /**
@@ -63,7 +63,7 @@ namespace au\net\andrewgrant {
          * when the form is [tagName]the content[/tagName]
          * @return type This returns the shortcode output.
          */
-        public function runFunc($atts = NULL, $content = NULL) {
+        public function executeCallback($atts = NULL, $content = NULL) {
             // The incoming attributes could contain arbitrary key/values.
             // Apply the defaults now if a defaults array has been set
             if (!is_null($this->defaultsArray)) {
