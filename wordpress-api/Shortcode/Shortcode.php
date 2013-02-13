@@ -1,55 +1,78 @@
 <?php
 
-/*
-  Plugin Name: Shortcode Example 6
-  Plugin URI: http://example.com/
-  Description: Enables [url] and [b] shortcodes in comments
-  Version: 1.0
-  Author: Ozh
-  Author URI: http://wrox.com/
- */
+namespace au\net\andrewgrant {
 
-// Hook into "comment_text" to process comment content
+    class Shortcode {
 
-add_filter("comment_text ", "boj_sc6_comments");
+        private $defaultsArray = NULL;
 
-// This function processes comment content
-function boj_sc6_comments($comment) {
+        public function setDefaults($defaultsArray) {
+            $this->defaultsArray = $defaultsArray;
+        }
 
-    // Save registered shortcodes:
-    global $shortcode_tags;
-    $original = $shortcode_tags;
+        private $replacementText;
 
-    // Unregister all shortcodes:
-    remove_all_shortcodes();
+        /**
+         *
+         * @return type This returns the text that was used to construct this
+         * instance - the shortcode tag text
+         */
+        public function getReplacementText() {
+            return $this->replacementText;
+        }
 
-    // Register new shortcodes:
-    add_shortcode("url ", "boj_sc6_comments_url");
-    add_shortcode("b ", "boj_sc6_comments_bold");
-    add_shortcode("strong ", "boj_sc6_comments_bold");
+        private function setReplacementText($replacementText) {
+            $this->replacementText = $replacementText;
+        }
 
-    // Strip all HTML tags from comments:
-    $comment = wp_strip_all_tags($comment);
+        private $shortcodeFunction;
 
-    // Process comment content with these shortcodes:
-    $comment = do_shortcode($comment);
+        private function setShortcodeFunction($replacementFunction) {
+            if (is_callable($replacementFunction)) {
+                $this->shortcodeFunction = $replacementFunction;
+            } else {
+                throw new \Exception("A function was expected");
+            }
+        }
 
-    // Unregister comment shortcodes, restore normal shortcodes
-    $shortcode_tags = $original;
+        /**
+         *
+         * @param type $replacementText This is the shortcode tag name, as
+         * entered by the end user of the shortcode
+         */
+        function __construct($replacementText) {
+            $this->setReplacementText($replacementText);
+        }
 
-    // Return comment:
-    return $comment;
-}
+        /**
+         *
+         * @param type $func This is the callback function: the function that
+         * will be executed in place of the shortcode tag
+         */
+        public function renderShortcode($func) {
+            add_shortcode($this->getReplacementText(), array($this, 'runFunc'));
+            $this->setShortcodeFunction($func);
+            $this->runFunc();
+        }
 
-// the [b] or [strong] to  < strong > callback
+        /**
+         *
+         * @param type $atts This will be all of the name/value pairs entered
+         *  by the end user (called by the WordPress system)
+         * @param type $content This is any content between the shortcode tag
+         * when the form is [tagName]the content[/tagName]
+         * @return type This returns the shortcode output.
+         */
+        public function runFunc($atts = NULL, $content = NULL) {
+            // The incoming attributes could contain arbitrary key/values.
+            // Apply the defaults now if a defaults array has been set
+            if (!is_null($this->defaultsArray)) {
+                $atts = shortcode_atts($this->defaultsArray, $atts);
+            }
+            return call_user_func($this->shortcodeFunction, $atts, $content);
+        }
 
-function boj_sc6_comments_bold($attr, $text) {
-    return " < strong > " . do_shortcode( $text ) . " < /strong > ";
-}
+    }
 
-// the [url] to  < a >  callback
-function boj_sc6_comments_url($attr, $text) {
-    $text = esc_url($text);
-    return " < a href = \"$text\"> $text < /a > ";
 }
 ?>
