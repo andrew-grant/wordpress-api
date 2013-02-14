@@ -9,7 +9,6 @@ namespace au\net\andrewgrant {
     class Shortcode {
 
         /**
-         *
          * @param string $tag
          */
         public static function removeShortcode($tag) {
@@ -25,10 +24,9 @@ namespace au\net\andrewgrant {
         }
 
         /**
-         *
          * @param string $tagThe tag text (shortcode name)
          * @param function $callback The function you want executed when the
-         *  tag text is encountered
+         * tag text is encountered
          */
         public static function addShortcode($tag, $callback) {
             add_shortcode($tag, $callback);
@@ -43,15 +41,14 @@ namespace au\net\andrewgrant {
         private $tag;
 
         /**
-         *
          * @return string The tag text used to construct an instance
          */
         public function getTag() {
             return $this->tag;
         }
 
-        private function setTag($tagText) {
-            $this->tag = $tagText;
+        private function setTag($tag) {
+            $this->tag = $tag;
         }
 
         private $shortcodeFunction;
@@ -65,27 +62,24 @@ namespace au\net\andrewgrant {
         }
 
         /**
-         *
          * @param string $tag This is the shortcode tag
-         *  text, as typed by the end user of the shortcode
+         * text, as typed by the end user of the shortcode
          */
         function __construct($tag) {
             $this->setTag($tag);
         }
 
         /**
-         *
          * @param type function This is the callback function: the function
          * that will be executed in place of the shortcode tag
          */
         public function renderShortcode($callback) {
-            add_shortcode($this->getTag(), array($this, 'runFunc'));
+            add_shortcode($this->getTag(), array($this, 'executeCallback'));
             $this->setCallback($callback);
             $this->executeCallback();
         }
 
         /**
-         *
          * @param array $atts This will be all of the name/value pairs entered
          *  by the end user (called by the WordPress system)
          * @param string $content This is any content between the shortcode tag
