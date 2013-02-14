@@ -7,6 +7,7 @@
   Author URI: www.andrewgrant.net.au
  */
 require_once 'Shortcode.php';
+use au\net\andrewgrant\wordpress as ag;
 
 $defaultValues = array(name => "anonymous", age => "0", gender => "male");
 $f = function($atts, $content) {
@@ -14,7 +15,7 @@ $f = function($atts, $content) {
             return "<h3>Name is: $name</h3><h3>Content is: $content</h3>";
         };
 
-$sc = new au\net\andrewgrant\Shortcode("yo");
+$sc = new ag\Shortcode("yo");
 $sc->setDefaults($defaultValues);
 $sc->renderShortcode($f);
 ?>

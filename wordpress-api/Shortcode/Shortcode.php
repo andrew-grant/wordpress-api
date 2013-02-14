@@ -1,6 +1,6 @@
 <?php
 
-namespace au\net\andrewgrant {
+namespace au\net\andrewgrant\wordpress {
 
     /**
      *
