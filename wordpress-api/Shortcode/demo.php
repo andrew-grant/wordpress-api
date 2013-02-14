@@ -1,8 +1,8 @@
 <?php
 
-/* Plugin Name: Shortcode Plugin
-  Plugin URI: http://www.andrewgrant.net.au/shortcode-utility-tutorial
-  Description: A test
+/* Plugin Name: Shortcode Demo Plugin
+  Plugin URI: http://www.andrewgrant.net.au/wordpress-shortcode-api-wrapper/
+  Description: A demo of using teh shortcode class
   Version: 1.0
   Author: Andrew Grant
   Author URI: www.andrewgrant.net.au

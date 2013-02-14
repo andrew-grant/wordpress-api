@@ -2,7 +2,37 @@
 
 namespace au\net\andrewgrant {
 
+    /**
+     *
+     * @author Andrew Grant
+     */
     class Shortcode {
+
+        /**
+         *
+         * @param string $tag
+         */
+        public static function removeShortcode($tag) {
+            remove_shortcode($tag);
+        }
+
+        /**
+         * Remove all previously defined shortcodes
+         * @return none
+         */
+        public static function removeAllShortcodes() {
+            remove_all_shortcodes();
+        }
+
+        /**
+         *
+         * @param string $tagThe tag text (shortcode name)
+         * @param function $callback The function you want executed when the
+         *  tag text is encountered
+         */
+        public static function addShortcode($tag, $callback) {
+            add_shortcode($tag, $callback);
+        }
 
         private $defaultsArray = NULL;
 
@@ -10,19 +40,18 @@ namespace au\net\andrewgrant {
             $this->defaultsArray = $defaultsArray;
         }
 
-        private $tagText;
+        private $tag;
 
         /**
          *
-         * @return type This returns the text that was used to construct this
-         * instance - the shortcode tag text
+         * @return string The tag text used to construct an instance
          */
-        public function getTagText() {
-            return $this->tagText;
+        public function getTag() {
+            return $this->tag;
         }
 
-        private function setTagText($tagText) {
-            $this->tagText = $tagText;
+        private function setTag($tagText) {
+            $this->tag = $tagText;
         }
 
         private $shortcodeFunction;
@@ -37,31 +66,31 @@ namespace au\net\andrewgrant {
 
         /**
          *
-         * @param type $tagText This is the shortcode tag name, as
-         * entered by the end user of the shortcode
+         * @param string $tag This is the shortcode tag
+         *  text, as typed by the end user of the shortcode
          */
-        function __construct($tagText) {
-            $this->setTagText($tagText);
+        function __construct($tag) {
+            $this->setTag($tag);
         }
 
         /**
          *
-         * @param type $func This is the callback function: the function that
-         * will be executed in place of the shortcode tag
+         * @param type function This is the callback function: the function
+         * that will be executed in place of the shortcode tag
          */
         public function renderShortcode($callback) {
-            add_shortcode($this->getTagText(), array($this, 'runFunc'));
+            add_shortcode($this->getTag(), array($this, 'runFunc'));
             $this->setCallback($callback);
             $this->executeCallback();
         }
 
         /**
          *
-         * @param type $atts This will be all of the name/value pairs entered
+         * @param array $atts This will be all of the name/value pairs entered
          *  by the end user (called by the WordPress system)
-         * @param type $content This is any content between the shortcode tag
+         * @param string $content This is any content between the shortcode tag
          * when the form is [tagName]the content[/tagName]
-         * @return type This returns the shortcode output.
+         * @return string This returns the shortcode output.
          */
         public function executeCallback($atts = NULL, $content = NULL) {
             // The incoming attributes could contain arbitrary key/values.
